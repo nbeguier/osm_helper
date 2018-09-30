@@ -9,6 +9,8 @@ from sys import argv
 # Debug
 # from pdb import set_trace as st
 
+LINEUP_LIST = [ '4-4-2', '4-3-3', '3-5-2' ]
+
 def get_players():
     players = {}
     with open(argv[1], 'r') as csvfile:
@@ -110,15 +112,16 @@ class LineUp(object):
         print 'OVERALL RATE = %s' % (rate_sum/10)
         return [nb_defenders, nb_midfielders, nb_attackers]
 
-    def get_squad(self, lineup):
+    def get_squad(self, lineup, verbose=True):
         [nb_defenders, nb_midfielders, nb_attackers] = lineup.split('-')
         players_copy = self.players.copy()
-        rate_sum = 0
+        rate_sum = float(0)
 
-        print '-----------'
-        print 'LINEUP : %s' % lineup
-        print '-----------'
-        print 'Defenders :'
+        if verbose:
+        	print '-----------'
+        	print 'LINEUP : %s' % lineup
+        	print '-----------'
+        	print 'Defenders :'
 
         nb_players_left = int(nb_defenders)
         while nb_players_left > 0:
@@ -130,13 +133,14 @@ class LineUp(object):
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
             players_copy.pop(best_player_name)
-            print('%s (D:%s)' % (best_player_name, best_player_rate))
+            if verbose:
+            	print('%s (D:%s)' % (best_player_name, best_player_rate))
             nb_players_left -= 1
             rate_sum += best_player_rate
 
-                
-        print '-----------'
-        print 'Midfielders :'
+        if verbose:
+        	print '-----------'
+        	print 'Midfielders :'
 
         nb_players_left = int(nb_midfielders)
         while nb_players_left > 0:
@@ -148,12 +152,14 @@ class LineUp(object):
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
             players_copy.pop(best_player_name)
-            print('%s (A:%s, D:%s, %s)' % (best_player_name, self.players[best_player_name]['Atk'], self.players[best_player_name]['Def'], best_player_rate))
+            if verbose:
+                print('%s (A:%s, D:%s, %s)' % (best_player_name, self.players[best_player_name]['Atk'], self.players[best_player_name]['Def'], best_player_rate))
             nb_players_left -= 1
             rate_sum += best_player_rate
                 
-        print '-----------'
-        print 'Attackers :'
+        if verbose:
+            print '-----------'
+            print 'Attackers :'
 
         nb_players_left = int(nb_attackers)
         while nb_players_left > 0:
@@ -165,12 +171,15 @@ class LineUp(object):
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
             players_copy.pop(best_player_name)
-            print('%s (A:%s)' % (best_player_name, best_player_rate))
+            if verbose:
+                print('%s (A:%s)' % (best_player_name, best_player_rate))
             nb_players_left -= 1
             rate_sum += best_player_rate
 
-        print '-----------'
-        print 'OVERALL RATE = %s' % (rate_sum/10)
+        if verbose:
+            print '-----------'
+            print 'OVERALL RATE = %s' % (rate_sum/10)
+        return rate_sum/10
 
 if __name__ == '__main__':
     OSM = LineUp(get_players())
@@ -180,3 +189,5 @@ if __name__ == '__main__':
         OSM.get_squad(argv[2])
     except:
         print('You could define a Lineup as a 2nd arg')
+    for lineup in LINEUP_LIST:
+        print('%s : %s' % (lineup, OSM.get_squad(lineup, verbose=False)))
