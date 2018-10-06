@@ -9,7 +9,7 @@ from sys import argv
 # Debug
 # from pdb import set_trace as st
 
-LINEUP_LIST = [ '4-4-2', '4-3-3', '3-5-2' ]
+LINEUP_LIST = [ '4-4-2', '4-3-3', '3-5-2', '3-4-3', '5-3-2' ]
 
 def get_players():
     players = {}
@@ -178,7 +178,7 @@ class LineUp(object):
 
         if verbose:
             print '-----------'
-            print 'OVERALL RATE = %s' % (rate_sum/10)
+            print 'OVERALL RATE = %d' % (rate_sum/10)
         return rate_sum/10
 
 if __name__ == '__main__':
