@@ -132,7 +132,10 @@ class LineUp(object):
                     if self.players[player_name]['Rate'] > best_player_rate and self.players[player_name]['Play']:
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
-            players_copy.pop(best_player_name)
+            try:
+                players_copy.pop(best_player_name)
+            except KeyError:
+                return False
             if verbose:
             	print('%s (D:%s)' % (best_player_name, best_player_rate))
             nb_players_left -= 1
@@ -151,7 +154,10 @@ class LineUp(object):
                     if self.players[player_name]['Rate'] > best_player_rate and self.players[player_name]['Play']:
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
-            players_copy.pop(best_player_name)
+            try:
+                players_copy.pop(best_player_name)
+            except KeyError:
+                return False
             if verbose:
                 print('%s (A:%s, D:%s, %s)' % (best_player_name, self.players[best_player_name]['Atk'], self.players[best_player_name]['Def'], best_player_rate))
             nb_players_left -= 1
@@ -170,7 +176,10 @@ class LineUp(object):
                     if self.players[player_name]['Rate'] > best_player_rate and self.players[player_name]['Play']:
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
-            players_copy.pop(best_player_name)
+            try:
+                players_copy.pop(best_player_name)
+            except KeyError:
+                return False
             if verbose:
                 print('%s (A:%s)' % (best_player_name, best_player_rate))
             nb_players_left -= 1
