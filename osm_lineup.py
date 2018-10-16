@@ -80,7 +80,7 @@ class LineUp(object):
         nb_defenders = 0
         nb_midfielders = 0
         nb_attackers = 0
-        rate_sum = 0
+        rate_sum = float(0)
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'D':
                 nb_defenders+=1
