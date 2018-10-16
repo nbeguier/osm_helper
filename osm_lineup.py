@@ -21,7 +21,8 @@ def get_players():
                 "Position": player[1],
                 "Atk": player[2],
                 "Def": player[3],
-                "Play": player[4] == 'True',
+                "Nationality": player[4],
+                "Play": player[5] == 'True',
                 }})
     return players
 
