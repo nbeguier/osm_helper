@@ -4,6 +4,7 @@
 
 # Standard library imports
 from csv import reader
+from operator import itemgetter
 from sys import argv
 
 # Debug
@@ -25,6 +26,13 @@ def get_players():
                 "Play": player[5] == 'True',
                 }})
     return players
+
+def increment_dict(dictionnary, key):
+    if key in dictionnary:
+        dictionnary[key] += 1
+    else:
+        dictionnary[key] = 0
+    return dictionnary
 
 class LineUp(object):
     def __init__(self, players):
@@ -82,6 +90,7 @@ class LineUp(object):
         nb_midfielders = 0
         nb_attackers = 0
         rate_sum = float(0)
+        nationality_dict = dict()
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'D':
                 nb_defenders+=1
@@ -97,26 +106,31 @@ class LineUp(object):
             if top_players[player_name]['Position'] == 'D':
                 print('%s (D:%s)' % (player_name, top_players[player_name]['Rate']))
                 rate_sum += top_players[player_name]['Rate']
+                increment_dict(nationality_dict, top_players[player_name]['Nationality'])
         print '-----------'
         print 'Midfielders :'
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'M':
                 print('%s (A:%s, D:%s, %s)' % (player_name, top_players[player_name]['Atk'], top_players[player_name]['Def'], top_players[player_name]['Rate']))
                 rate_sum += top_players[player_name]['Rate']
+                increment_dict(nationality_dict, top_players[player_name]['Nationality'])
         print '-----------'
         print 'Attackers :'
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'A':
                 print('%s (A:%s)' % (player_name, top_players[player_name]['Rate']))
                 rate_sum += top_players[player_name]['Rate']
+                increment_dict(nationality_dict, top_players[player_name]['Nationality'])
         print '-----------'
-        print 'OVERALL RATE = %s' % (rate_sum/10)
+        max_country = max(nationality_dict.iteritems(), key=itemgetter(1))[0]
+        print 'OVERALL RATE = %s [%s]' % (rate_sum/10, nationality_dict[max_country])
         return [nb_defenders, nb_midfielders, nb_attackers]
 
     def get_squad(self, lineup, verbose=True):
         [nb_defenders, nb_midfielders, nb_attackers] = lineup.split('-')
         players_copy = self.players.copy()
         rate_sum = float(0)
+        nationality_dict = dict()
 
         if verbose:
         	print '-----------'
@@ -128,11 +142,13 @@ class LineUp(object):
         while nb_players_left > 0:
             best_player_name = ''
             best_player_rate = -1
+            best_player_nationality = ''
             for player_name in self.players:
                 if self.players[player_name]['Position'] == 'D' and player_name in players_copy:
                     if self.players[player_name]['Rate'] > best_player_rate and self.players[player_name]['Play']:
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
+                        best_player_nationality = self.players[player_name]['Nationality']
             try:
                 players_copy.pop(best_player_name)
             except KeyError:
@@ -141,6 +157,7 @@ class LineUp(object):
             	print('%s (D:%s)' % (best_player_name, best_player_rate))
             nb_players_left -= 1
             rate_sum += best_player_rate
+            increment_dict(nationality_dict, best_player_nationality)
 
         if verbose:
         	print '-----------'
@@ -150,11 +167,13 @@ class LineUp(object):
         while nb_players_left > 0:
             best_player_name = ''
             best_player_rate = -1
+            best_player_nationality = ''
             for player_name in self.players:
                 if self.players[player_name]['Position'] == 'M' and player_name in players_copy:
                     if self.players[player_name]['Rate'] > best_player_rate and self.players[player_name]['Play']:
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
+                        best_player_nationality = self.players[player_name]['Nationality']
             try:
                 players_copy.pop(best_player_name)
             except KeyError:
@@ -163,6 +182,7 @@ class LineUp(object):
                 print('%s (A:%s, D:%s, %s)' % (best_player_name, self.players[best_player_name]['Atk'], self.players[best_player_name]['Def'], best_player_rate))
             nb_players_left -= 1
             rate_sum += best_player_rate
+            increment_dict(nationality_dict, best_player_nationality)
                 
         if verbose:
             print '-----------'
@@ -172,11 +192,13 @@ class LineUp(object):
         while nb_players_left > 0:
             best_player_name = ''
             best_player_rate = -1
+            best_player_nationality = ''
             for player_name in self.players:
                 if self.players[player_name]['Position'] == 'A' and player_name in players_copy:
                     if self.players[player_name]['Rate'] > best_player_rate and self.players[player_name]['Play']:
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
+                        best_player_nationality = self.players[player_name]['Nationality']
             try:
                 players_copy.pop(best_player_name)
             except KeyError:
@@ -185,11 +207,13 @@ class LineUp(object):
                 print('%s (A:%s)' % (best_player_name, best_player_rate))
             nb_players_left -= 1
             rate_sum += best_player_rate
+            increment_dict(nationality_dict, best_player_nationality)
 
+        max_country = max(nationality_dict.iteritems(), key=itemgetter(1))[0]
         if verbose:
             print '-----------'
-            print 'OVERALL RATE = %d' % (rate_sum/10)
-        return rate_sum/10
+            print 'OVERALL RATE = %d [%s]' % (rate_sum/10, nationality_dict[max_country])
+        return rate_sum/10, nationality_dict[max_country]
 
 if __name__ == '__main__':
     OSM = LineUp(get_players())
