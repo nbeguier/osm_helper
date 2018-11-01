@@ -10,7 +10,7 @@ from sys import argv
 # Debug
 # from pdb import set_trace as st
 
-LINEUP_LIST = [ '4-4-2', '4-3-3', '3-5-2', '3-4-3', '5-3-2' ]
+LINEUP_LIST = [ '4-4-2', '4-3-3', '3-5-2', '3-4-3', '5-3-2', '3-3-4' ]
 
 def get_players():
     players = {}
@@ -212,7 +212,7 @@ class LineUp(object):
         max_country = max(nationality_dict.iteritems(), key=itemgetter(1))[0]
         if verbose:
             print '-----------'
-            print 'OVERALL RATE = %d [%s]' % (rate_sum/10, nationality_dict[max_country])
+            print 'OVERALL RATE = %s [%s]' % (rate_sum/10, nationality_dict[max_country])
         return rate_sum/10, nationality_dict[max_country]
 
 if __name__ == '__main__':
