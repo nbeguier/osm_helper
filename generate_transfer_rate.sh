@@ -1,8 +1,12 @@
 #!/bin/bash
 
-TRANSFER_BATCH=$1
+TEAM=$1
+ACCESS_KEY=$2
+LEAGUE_ID=$(grep league_id squad/"${TEAM}".ini | awk -F= '{print $2}')
+TEAM_ID=$(grep team_id squad/"${TEAM}".ini | awk -F= '{print $2}')
 
-for player in $(bash "${TRANSFER_BATCH}" 2>/dev/null | grep '"id"' | jq -c  '.[] | .player | {name, value, price, position}' 2>/dev/null | sed 's/ /_/g')
+
+for player in $(bash ./src/requests.sh /v1/leagues/"${LEAGUE_ID}"/teams/"${TEAM_ID}"/transferplayers/0 "${ACCESS_KEY}" 2>/dev/null | grep '"id"' | jq -c  '.[] | .player | {name, value, price, position}' 2>/dev/null | sed 's/ /_/g')
 do
     NAME=$(echo "${player}" | awk -F'"' '{print $4}')
     VALUE=$(echo "${player}" | awk -F'"' '{print $7}' | sed 's/://g' | sed 's/,//g')
