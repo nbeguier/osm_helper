@@ -30,9 +30,9 @@ vim credentials
 
 ```
 # Generate a token
-./get_token.sh credentials
+./get_token.sh [credentials file]
 
-ACCESS_KEY=XXXXXX
+export ACCESS_KEY=XXXXXX
 ```
 
 ## Transfer
