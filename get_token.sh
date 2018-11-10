@@ -5,10 +5,11 @@ CREDENTIALS=${1:-"credentials"}
 TOKEN_TMP_FILE=/tmp/.token
 CLIENT_ID=$(grep client_id "${CREDENTIALS}" | awk -F= '{print $2}')
 CLIENT_SECRET=$(grep client_secret "${CREDENTIALS}" | awk -F= '{print $2}')
-REFRESH_TOKEN=$(grep refresh_token "${CREDENTIALS}" | awk -F= '{print $2}')
+USERNAME=$(grep username "${CREDENTIALS}" | awk -F= '{print $2}')
+PASSWORD=$(grep password "${CREDENTIALS}" | awk -F= '{print $2}')
 
 curl 'https://web-api.onlinesoccermanager.com/api/token' \
-    --data "grant_type=refresh_token&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${REFRESH_TOKEN}" \
+    --data "grant_type=password&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&password=${PASSWORD}&userName=${USERNAME}" \
     --silent \
     --output "${TOKEN_TMP_FILE}"
 
