@@ -12,6 +12,6 @@ curl 'https://web-api.onlinesoccermanager.com/api/token' \
     --silent \
     --output "${TOKEN_TMP_FILE}"
 
-echo export ACCESS_TOKEN=$(cat "${TOKEN_TMP_FILE}" | jq .access_token | sed 's/"//g')
+export ACCESS_TOKEN=$(cat "${TOKEN_TMP_FILE}" | jq .access_token | sed 's/"//g')
 
 rm "${TOKEN_TMP_FILE}"

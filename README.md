@@ -30,14 +30,12 @@ vim credentials
 
 ```
 # Generate a token
-./get_token.sh [credentials file]
-
-export ACCESS_KEY=XXXXXX
+source ./get_token.sh
 ```
 
 ## Transfer
 
 ```
 # Check the transfer list of your league
-./generate_transfer_rate.sh team ${ACCESS_KEY}
+./generate_transfer_rate.sh team_name
 ```
