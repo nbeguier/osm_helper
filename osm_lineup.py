@@ -38,6 +38,7 @@ class LineUp(object):
     def __init__(self, players):
         self.players = players
         self.rate_players()
+        self.mentality_players()
 
     def rate_players(self):
         for player_name in self.players:
@@ -49,6 +50,31 @@ class LineUp(object):
                 self.players[player_name]['Rate'] = (
                     int(self.players[player_name]['Def']) + int(self.players[player_name]['Atk'])
                     ) / 2
+
+    def mentality_players(self):
+        for player_name in self.players:
+            if self.players[player_name]['Position'] == 'D':
+                if int(self.players[player_name]['Atk']) < 15:
+                    self.players[player_name]['Mentality'] = 'Defensive'
+                elif int(self.players[player_name]['Atk']) < 30:
+                    self.players[player_name]['Mentality'] = 'Polyvalent'
+                else:
+                    self.players[player_name]['Mentality'] = 'Offensive'
+            elif self.players[player_name]['Position'] == 'A':
+                if int(self.players[player_name]['Def']) < 15:
+                    self.players[player_name]['Mentality'] = 'Offensive'
+                elif int(self.players[player_name]['Def']) < 30:
+                    self.players[player_name]['Mentality'] = 'Polyvalent'
+                else:
+                    self.players[player_name]['Mentality'] = 'Defensive'
+            else:
+                diff = int(self.players[player_name]['Atk']) - int(self.players[player_name]['Def'])
+                if diff < -2:
+                    self.players[player_name]['Mentality'] = 'Defensive'
+                elif diff < 3:
+                    self.players[player_name]['Mentality'] = 'Polyvalent'
+                else:
+                    self.players[player_name]['Mentality'] = 'Offensive'
 
     def get_top(self, n):
         sorted_players = {}
@@ -65,27 +91,8 @@ class LineUp(object):
             sorted_players.update(best_player)
         return sorted_players
 
-    def get_2nd_top(self, n):
-        sorted_players = {}
-        players_copy = self.players.copy()
-        nb_players = min(len(self.players), n+1)
-        for i in range(nb_players):
-            best_player_name = ''
-            best_player_rate = 0
-            for player_name in players_copy:
-                if players_copy[player_name]['Rate'] > best_player_rate and players_copy[player_name]['Play']:
-                    best_player_name = player_name
-                    best_player_rate = players_copy[player_name]['Rate']
-            best_player = { best_player_name: players_copy.pop(best_player_name)}
-            if i != n-1:
-                sorted_players.update(best_player)
-        return sorted_players
-
-    def get_best_lineup(self, second=False):
-        if second:
-            top_players = self.get_2nd_top(10)
-        else:
-            top_players = self.get_top(10)
+    def get_best_lineup(self):
+        top_players = self.get_top(10)
         nb_defenders = 0
         nb_midfielders = 0
         nb_attackers = 0
@@ -104,21 +111,21 @@ class LineUp(object):
         print 'Defenders :'
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'D':
-                print('%s (D:%s)' % (player_name, top_players[player_name]['Rate']))
+                print('%s (%s) (%s)' % (player_name, top_players[player_name]['Rate'], top_players[player_name]['Mentality']))
                 rate_sum += top_players[player_name]['Rate']
                 increment_dict(nationality_dict, top_players[player_name]['Nationality'])
         print '-----------'
         print 'Midfielders :'
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'M':
-                print('%s (A:%s, D:%s, %s)' % (player_name, top_players[player_name]['Atk'], top_players[player_name]['Def'], top_players[player_name]['Rate']))
+                print('%s (%s) (%s)' % (player_name, top_players[player_name]['Rate'], top_players[player_name]['Mentality']))
                 rate_sum += top_players[player_name]['Rate']
                 increment_dict(nationality_dict, top_players[player_name]['Nationality'])
         print '-----------'
         print 'Attackers :'
         for player_name in top_players:
             if top_players[player_name]['Position'] == 'A':
-                print('%s (A:%s)' % (player_name, top_players[player_name]['Rate']))
+                print('%s (%s) (%s)' % (player_name, top_players[player_name]['Rate'], top_players[player_name]['Mentality']))
                 rate_sum += top_players[player_name]['Rate']
                 increment_dict(nationality_dict, top_players[player_name]['Nationality'])
         print '-----------'
@@ -149,12 +156,13 @@ class LineUp(object):
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
                         best_player_nationality = self.players[player_name]['Nationality']
+                        best_player_mentality = self.players[player_name]['Mentality']
             try:
                 players_copy.pop(best_player_name)
             except KeyError:
                 return False
             if verbose:
-            	print('%s (D:%s)' % (best_player_name, best_player_rate))
+            	print('%s (%s) (%s)' % (best_player_name, best_player_rate, best_player_mentality))
             nb_players_left -= 1
             rate_sum += best_player_rate
             increment_dict(nationality_dict, best_player_nationality)
@@ -174,12 +182,13 @@ class LineUp(object):
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
                         best_player_nationality = self.players[player_name]['Nationality']
+                        best_player_mentality = self.players[player_name]['Mentality']
             try:
                 players_copy.pop(best_player_name)
             except KeyError:
                 return False
             if verbose:
-                print('%s (A:%s, D:%s, %s)' % (best_player_name, self.players[best_player_name]['Atk'], self.players[best_player_name]['Def'], best_player_rate))
+                print('%s (%s) (%s)' % (best_player_name, best_player_rate, best_player_mentality))
             nb_players_left -= 1
             rate_sum += best_player_rate
             increment_dict(nationality_dict, best_player_nationality)
@@ -199,12 +208,13 @@ class LineUp(object):
                         best_player_name = player_name
                         best_player_rate = self.players[player_name]['Rate']
                         best_player_nationality = self.players[player_name]['Nationality']
+                        best_player_mentality = self.players[player_name]['Mentality']
             try:
                 players_copy.pop(best_player_name)
             except KeyError:
                 return False
             if verbose:
-                print('%s (A:%s)' % (best_player_name, best_player_rate))
+                print('%s (%s) (%s)' % (best_player_name, best_player_rate, best_player_mentality))
             nb_players_left -= 1
             rate_sum += best_player_rate
             increment_dict(nationality_dict, best_player_nationality)
@@ -218,7 +228,6 @@ class LineUp(object):
 if __name__ == '__main__':
     OSM = LineUp(get_players())
     OSM.get_best_lineup()
-    # OSM.get_best_lineup(second=True)
     try:
         OSM.get_squad(argv[2])
     except:
