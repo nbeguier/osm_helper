@@ -14,11 +14,13 @@ do
     ATT=$(echo "${player}" | awk -F'"' '{print $13}' | sed 's/://g' | sed 's/,//g')
     DEF=$(echo "${player}" | awk -F'"' '{print $15}' | sed 's/://g' | sed 's/,//g')
     if [ $POSTITION == 'A' ]; then
+        RATE=$ATT
         if [ $DEF -lt 15 ]; then MENTALITY='Offensive'
         elif [ $DEF -lt 30 ]; then MENTALITY='Polyvalent'
         else MENTALITY='Defensive'
         fi
     elif [ $POSTITION == 'D' ]; then
+        RATE=$DEF
         if [ $ATT -lt 15 ]; then MENTALITY='Defensive'
         elif [ $ATT -lt 30 ]; then MENTALITY='Polyvalent'
         else MENTALITY='Offensive'
