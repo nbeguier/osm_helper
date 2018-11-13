@@ -25,6 +25,8 @@ do
         elif [ $ATT -lt 30 ]; then MENTALITY='Polyvalent'
         else MENTALITY='Offensive'
         fi
+    elif [ $POSTITION == 'G' ]; then
+        RATE=$DEF
     else
         if [ $((ATT-DEF)) -lt -2 ]; then MENTALITY='Defensive'
         elif [ $((ATT-DEF)) -lt 3 ]; then MENTALITY='Polyvalent'
